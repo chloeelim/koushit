@@ -13,12 +13,27 @@ class Attempt(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
     video_id: Mapped[int] = mapped_column(ForeignKey("video.id"), nullable=False)
-    file: Mapped[str] = mapped_column(nullable=False)
-    text: Mapped[str] = mapped_column(nullable=False, server_default="")
+
     video: Mapped["Video"] = relationship("Video", back_populates="attempts")
 
+    submission: Mapped["Submission"] = relationship(
+        "Submission", uselist=False, back_populates="attempt"
+    )
+
+
+class Submission(Base):
+    __tablename__ = "submission"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    attempt_id: Mapped[int] = mapped_column(ForeignKey("attempt.id"), nullable=False)
+
+    file: Mapped[str] = mapped_column(nullable=False)
+    text: Mapped[str] = mapped_column(nullable=False, server_default="")
+
+    attempt: Mapped[Attempt] = relationship("Attempt", back_populates="submission")
+
     comments: Mapped[list["Comment"]] = relationship(
-        "Comment", back_populates="attempt"
+        "Comment", back_populates="submission"
     )
 
 
@@ -26,8 +41,12 @@ class Comment(Base):
     __tablename__ = "comment"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    attempt_id: Mapped[int] = mapped_column(ForeignKey("attempt.id"), nullable=False)
+    submission_id: Mapped[int] = mapped_column(
+        ForeignKey("submission.id"), nullable=False
+    )
     topic: Mapped[str] = mapped_column(nullable=False)
     explanation: Mapped[str] = mapped_column(nullable=False)
 
-    attempt: Mapped[Attempt] = relationship("Attempt", back_populates="comments")
+    submission: Mapped[Submission] = relationship(
+        "Submission", back_populates="comments"
+    )

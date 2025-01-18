@@ -5,12 +5,13 @@ from sqlalchemy.orm import selectinload
 
 from src.lm.feedback_lm import generate_feedback
 from src.transcribe.transcribe import transcribe
-from src.attempts.models import Attempt, Comment
+from src.attempts.models import Attempt, Comment, Submission
 from src.auth.dependencies import get_current_user
 from src.common.dependencies import get_session
 from src.videos.models import Video, VideoPoint
 from src.videos.schemas import (
     AttemptPublic,
+    SubmissionPublic,
     VideoAttemptCreate,
     VideoCreate,
     VideoPublic,
@@ -28,7 +29,9 @@ def get_all_videos(
     videos = session.scalars(
         select(Video).options(
             selectinload(Video.points),
-            selectinload(Video.attempts.and_(Attempt.user_id == user.id)),
+            selectinload(Video.attempts.and_(Attempt.user_id == user.id))
+            .selectinload(Attempt.submission)
+            .selectinload(Submission.comments),
         )
     ).all()
     return videos
@@ -45,9 +48,9 @@ def get_video(
         .where(Video.id == video_id)
         .options(
             selectinload(Video.points),
-            selectinload(Video.attempts.and_(Attempt.user_id == user.id)).selectinload(
-                Attempt.comments
-            ),
+            selectinload(Video.attempts.and_(Attempt.user_id == user.id))
+            .selectinload(Attempt.submission)
+            .selectinload(Submission.comments),
         )
     )
     return video
@@ -72,21 +75,37 @@ def create_video(data: VideoCreate, session=Depends(get_session)) -> VideoPublic
 @router.post("/{video_id}/attempts")
 def create_attempt(
     video_id: int,
-    data: VideoAttemptCreate,
     session=Depends(get_session),
     user=Depends(get_current_user),
 ) -> AttemptPublic:
+    new_attempt = Attempt(user_id=user.id, video_id=video_id)
+
+    session.add(new_attempt)
+    session.commit()
+    session.refresh(new_attempt)
+
+    return new_attempt
+
+
+@router.post("/{video_id}/attempts/{attempt_id}/submissions")
+def create_submission(
+    video_id: int,
+    data: VideoAttemptCreate,
+    attempt_id: int,
+    session=Depends(get_session),
+    user=Depends(get_current_user),
+) -> SubmissionPublic:
     text = transcribe("uploads/" + data.file)
-    new_attempt = Attempt(user_id=user.id, video_id=video_id, file=data.file, text=text)
+    new_submission = Submission(attempt_id=attempt_id, file=data.file, text=text)
 
     feedbacks = generate_feedback(video_id, text)
 
     print(feedbacks)
     for comment in feedbacks["comments"]:
-        new_attempt.comments.append(Comment(**comment))
+        new_submission.comments.append(Comment(**comment))
 
-    session.add(new_attempt)
+    session.add(new_submission)
     session.commit()
 
-    session.refresh(new_attempt)
-    return new_attempt
+    session.refresh(new_submission)
+    return new_submission
