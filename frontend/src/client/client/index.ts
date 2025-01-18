@@ -1,14 +1,14 @@
-import type { AxiosError, RawAxiosRequestHeaders } from "axios";
-import axios from "axios";
+import type { AxiosError, RawAxiosRequestHeaders } from 'axios';
+import axios from 'axios';
 
-import type { Client, Config } from "./types";
+import type { Client, Config } from './types';
 import {
   buildUrl,
   createConfig,
   mergeConfigs,
   mergeHeaders,
   setAuthParams,
-} from "./utils";
+} from './utils';
 
 export const createClient = (config: Config): Client => {
   let _config = mergeConfigs(createConfig(), config);
@@ -31,7 +31,7 @@ export const createClient = (config: Config): Client => {
   };
 
   // @ts-expect-error
-  const request: Client["request"] = async (options) => {
+  const request: Client['request'] = async (options) => {
     const opts = {
       ..._config,
       ...options,
@@ -68,7 +68,7 @@ export const createClient = (config: Config): Client => {
 
       let { data } = response;
 
-      if (opts.responseType === "json") {
+      if (opts.responseType === 'json') {
         if (opts.responseValidator) {
           await opts.responseValidator(data);
         }
@@ -95,15 +95,15 @@ export const createClient = (config: Config): Client => {
 
   return {
     buildUrl,
-    delete: (options) => request({ ...options, method: "delete" }),
-    get: (options) => request({ ...options, method: "get" }),
+    delete: (options) => request({ ...options, method: 'delete' }),
+    get: (options) => request({ ...options, method: 'get' }),
     getConfig,
-    head: (options) => request({ ...options, method: "head" }),
+    head: (options) => request({ ...options, method: 'head' }),
     instance,
-    options: (options) => request({ ...options, method: "options" }),
-    patch: (options) => request({ ...options, method: "patch" }),
-    post: (options) => request({ ...options, method: "post" }),
-    put: (options) => request({ ...options, method: "put" }),
+    options: (options) => request({ ...options, method: 'options' }),
+    patch: (options) => request({ ...options, method: 'patch' }),
+    post: (options) => request({ ...options, method: 'post' }),
+    put: (options) => request({ ...options, method: 'put' }),
     request,
     setConfig,
   } as Client;
@@ -117,10 +117,10 @@ export type {
   OptionsLegacyParser,
   RequestOptions,
   RequestResult,
-} from "./types";
+} from './types';
 export {
   createConfig,
   formDataBodySerializer,
   jsonBodySerializer,
   urlSearchParamsBodySerializer,
-} from "./utils";
+} from './utils';

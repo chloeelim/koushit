@@ -7,7 +7,9 @@ import {
 
 import SidebarLayout from "@/components/layout/sidebar-layout";
 
-import Attempt from "../pages/attempt/attempt";
+import AttemptPlan from "../pages/attempt/attempt";
+import AttemptPage from "../pages/attempt/page";
+import AttemptRecord from "../pages/attempt/record";
 import Home from "../pages/home/home";
 
 const authenticatedAppRouter = createBrowserRouter([
@@ -17,7 +19,16 @@ const authenticatedAppRouter = createBrowserRouter([
       { path: "/", element: <Home /> },
       {
         path: "/attempts",
-        children: [{ path: ":id", element: <Attempt /> }],
+        children: [
+          {
+            path: "/attempts/:id",
+            children: [
+              { path: "", element: <AttemptPage /> },
+              { path: "prepare", element: <AttemptPlan /> },
+              { path: "record", element: <AttemptRecord /> },
+            ],
+          },
+        ],
       },
       { path: "*", element: <Navigate to="/" replace /> },
     ],
