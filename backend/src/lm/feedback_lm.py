@@ -1,11 +1,10 @@
-from langchain_openai import OpenAI
 from prompts import RESPONSE_ANALYSIS_SYSPROMPT
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.output_parsers import JsonOutputParser
 from lm_model import lm_model
 
 
-def generate_feedback(question_id: int):
+def generate_feedback(question_id: int) -> dict:
     video_summary = """
         Lorem ipsum
     """  # Get from db query w qid
