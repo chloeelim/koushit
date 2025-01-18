@@ -7,6 +7,8 @@ import UnauthenticatedApp from "@/app/routing/unauthenticated-app";
 import DefaultFallbackLayout from "@/components/layout/default-fallback-layout";
 import { authQueries } from "@/modules/auth/query-factory";
 
+import AuthenticatedApp from "./authenticated-app";
+
 const AppRouter = () => {
   const user = useUserStore();
   const setUser = useSetUserStore();
@@ -25,6 +27,8 @@ const AppRouter = () => {
   } else if (!user && isError) {
     return <UnauthenticatedApp />;
   }
+
+  return <AuthenticatedApp />;
 };
 
 export default AppRouter;
