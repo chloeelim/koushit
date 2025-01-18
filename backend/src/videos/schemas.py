@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -18,6 +19,13 @@ class VideoPointPublic(BaseModel):
 
 
 class AttemptPublic(BaseModel):
+    id: int
+    user_id: int
+    video_id: int
+    submission: Optional["SubmissionPublic"] = None
+
+
+class SubmissionPublic(BaseModel):
     file: str
     text: str
     comments: list["CommentPublic"]
