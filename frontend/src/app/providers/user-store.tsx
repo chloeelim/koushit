@@ -4,9 +4,9 @@ import {
   SetUserStoreContext,
   UserStoreContext,
 } from "@/app/providers/user-store-provider";
-import { User } from "@/types/user";
+import { UserPublic } from "@/client";
 
-export interface UserStore extends User {}
+export interface UserStore extends UserPublic {}
 
 export type UserStoreSetter = Dispatch<SetStateAction<UserStore | undefined>>;
 

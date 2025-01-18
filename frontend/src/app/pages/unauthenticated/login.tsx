@@ -10,7 +10,7 @@ const LoginPage = () => {
           <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <Speech className="size-4" />
           </div>
-          koushi.t
+          {import.meta.env.VITE_APP_NAME}
         </a>
         <LoginForm />
       </div>

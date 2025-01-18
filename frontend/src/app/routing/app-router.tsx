@@ -16,7 +16,7 @@ const AppRouter = () => {
 
   useEffect(() => {
     if (isSuccess && data) {
-      setUser(undefined); // TODO
+      setUser(data.data);
     }
   }, [isSuccess, data, setUser]);
 
