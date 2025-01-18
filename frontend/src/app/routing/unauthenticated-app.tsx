@@ -9,14 +9,8 @@ import Login from "@/app/pages/unauthenticated/login";
 const unauthenticatedAppRouter = createBrowserRouter([
   {
     children: [
-      {
-        path: "/login",
-        element: <Login />,
-      },
-      {
-        path: "*",
-        element: <Navigate to="/login" replace />,
-      },
+      { path: "/login", element: <Login /> },
+      { path: "*", element: <Navigate to="/login" replace /> },
     ],
   },
 ]);
