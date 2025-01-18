@@ -3,11 +3,11 @@ import whisper
 model = whisper.load_model("tiny")
 
 
-def transcribe(file_id: int) -> str:
+def transcribe(file_path: str) -> str:
     # file_path = kjaslfjasdf # use later
 
     # load audio and pad/trim it to fit 30 seconds
-    audio = whisper.load_audio("testaudio.mp3")
+    audio = whisper.load_audio(file_path)
     audio = whisper.pad_or_trim(audio)
 
     # make log-Mel spectrogram and move to the same device as the model

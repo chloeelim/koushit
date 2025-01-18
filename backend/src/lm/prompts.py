@@ -14,7 +14,16 @@ RESPONSE_ANALYSIS_SYSPROMPT = """
     Provide a qualitative analysis of the student's response.
     Give your comments in the following JSON Format:
     {
-        
+        comments: [
+            {
+                "topic": "Coherence in content"
+                "explanation": "The student's response lacks coherence as it does not clearly address the prompt or relate to the video summary. The mention of garlic and corn seems disjointed and does not present a clear idea or opinion. The transition from discussing ingredients to identifying as a home cook is abrupt and does not provide a logical flow of thought."
+            },
+            {
+                "topic": "Fluency of speech"
+                "explanation": "The student's speech is somewhat fluent but is hindered by the lack of clarity in the content. Phrases like 'take a little garlic' and 'we could be professional' are vague and do not effectively communicate a complete thought. The response feels incomplete and does not engage the listener effectively."
+            }
+        ]
     
     }
 
