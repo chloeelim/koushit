@@ -12,7 +12,7 @@ const Home = () => {
         <span className="text-muted-foreground">Today's featured question</span>
       </div>
       <Separator className="my-4" />
-      <div className="flex flex-col border">
+      <div className="flex flex-col border rounded">
         <div className="flex mt-4 mx-4 items-center font-medium text-muted-foreground">
           <Speech className="size-4 mr-2" /> Oral practice
         </div>
