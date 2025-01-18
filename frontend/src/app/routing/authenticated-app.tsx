@@ -7,11 +7,18 @@ import {
 
 import SidebarLayout from "@/components/layout/sidebar-layout";
 
+import Attempt from "../pages/attempt/attempt";
+import Home from "../pages/home/home";
+
 const authenticatedAppRouter = createBrowserRouter([
   {
     element: <SidebarLayout children={<Outlet />} />,
     children: [
-      { path: "/", element: <h1>test</h1> },
+      { path: "/", element: <Home /> },
+      {
+        path: "/attempts",
+        children: [{ path: ":id", element: <Attempt /> }],
+      },
       { path: "*", element: <Navigate to="/" replace /> },
     ],
   },

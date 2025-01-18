@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
@@ -91,10 +91,10 @@ export function RegisterForm({
           </Button>
         </div>
         <div className="text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <a href="#" className="underline underline-offset-4">
-            Sign up
-          </a>
+          Already have an account?{" "}
+          <Link to="/login" className="underline underline-offset-4">
+            Login
+          </Link>
         </div>
       </form>
     </Form>
