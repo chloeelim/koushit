@@ -9,6 +9,7 @@ from src.auth.router import (
     routerWithAuth as auth_router_authenticated,
 )
 from src.files.router import router as files_router
+from src.videos.router import router as videos_router
 
 
 from contextlib import asynccontextmanager
@@ -48,5 +49,6 @@ server.include_router(auth_router)
 authenticated_router = APIRouter(prefix="", dependencies=[Depends(add_current_user)])
 authenticated_router.include_router(auth_router_authenticated)
 authenticated_router.include_router(files_router)
+authenticated_router.include_router(videos_router)
 
 server.include_router(authenticated_router)
