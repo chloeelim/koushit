@@ -1,4 +1,4 @@
-from common.constants import OPENAI_API_KEY
+from src.common.constants import OPENAI_API_KEY
 from langchain_openai import ChatOpenAI
 import os
 

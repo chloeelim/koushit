@@ -1,7 +1,10 @@
-from lm.prompts import RESPONSE_ANALYSIS_SYSPROMPT
+from src.videos.models import Video
+from src.lm.prompts import RESPONSE_ANALYSIS_SYSPROMPT
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.output_parsers import JsonOutputParser
-from lm.lm_model import lm_model
+from src.lm.lm_model import lm_model
+from sqlalchemy.orm import Session
+from src.common.database import engine
 
 
 def generate_feedback(question_id: int, student_response: str):
@@ -19,8 +22,11 @@ def generate_feedback(question_id: int, student_response: str):
 
 
 def format_human_prompt(question_id: int, student_response: str) -> str:
-    video_summary = "Lorem ipsum"  # Get from db later
-    video_prompts = "Lorem lorem"  # Get from db later
+    with Session(engine) as session:
+        video = session.get(Video, question_id)
+
+        video_summary = video.summary
+        video_prompts = ", ".join([point.point for point in video.points])
 
     human_prompt = f"""
     Video summary: {video_summary},

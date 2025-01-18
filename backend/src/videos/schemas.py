@@ -19,6 +19,13 @@ class VideoPointPublic(BaseModel):
 
 class AttemptPublic(BaseModel):
     file: str
+    text: str
+    comments: list["CommentPublic"]
+
+
+class CommentPublic(BaseModel):
+    topic: str
+    explanation: str
 
 
 class VideoCreate(BaseModel):

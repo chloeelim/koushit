@@ -1,8 +1,11 @@
+import json
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from src.attempts.models import Attempt
+from src.lm.feedback_lm import generate_feedback
+from src.transcribe.transcribe import transcribe
+from src.attempts.models import Attempt, Comment
 from src.auth.dependencies import get_current_user
 from src.common.dependencies import get_session
 from src.videos.models import Video, VideoPoint
@@ -42,7 +45,9 @@ def get_video(
         .where(Video.id == video_id)
         .options(
             selectinload(Video.points),
-            selectinload(Video.attempts.and_(Attempt.user_id == user.id)),
+            selectinload(Video.attempts.and_(Attempt.user_id == user.id)).selectinload(
+                Attempt.comments
+            ),
         )
     )
     return video
@@ -71,12 +76,17 @@ def create_attempt(
     session=Depends(get_session),
     user=Depends(get_current_user),
 ) -> AttemptPublic:
-    new_attempt = Attempt(
-        user_id=user.id,
-        video_id=video_id,
-        file=data.file,
-    )
+    text = transcribe("uploads/" + data.file)
+    new_attempt = Attempt(user_id=user.id, video_id=video_id, file=data.file, text=text)
+
+    feedbacks = generate_feedback(video_id, text)
+
+    print(feedbacks)
+    for comment in feedbacks["comments"]:
+        new_attempt.comments.append(Comment(**comment))
+
     session.add(new_attempt)
     session.commit()
+
     session.refresh(new_attempt)
     return new_attempt
