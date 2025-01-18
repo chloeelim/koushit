@@ -4,7 +4,7 @@ import { getUserAuthSessionGet } from "@/client";
 
 export const authQueries = {
   validateSession: queryOptions({
-    queryKey: ["auth", "sessions"],
+    queryKey: ["auth", "session"],
     queryFn: getUserAuthSessionGet,
     staleTime: 0,
   }),
