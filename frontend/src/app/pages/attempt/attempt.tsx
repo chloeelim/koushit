@@ -1,18 +1,36 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { ChevronRight, Info, Notebook, Timer, Videotape } from "lucide-react";
 
 import useTimer from "@/app/hooks/useTimer";
+import { getVideoVideosVideoIdGet } from "@/client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 const AttemptPlan = () => {
-  const createdAt = new Date(
-    "Sun Jan 19 2025 06:38:15 GMT+0800 (Singapore Standard Time)",
+  const { id } = useParams();
+  const { data: submission, isLoading } = useQuery(
+    queryOptions({
+      queryKey: ["video", 6],
+      queryFn: () =>
+        getVideoVideosVideoIdGet({ path: { video_id: 6 } })
+          .then((response) => response.data)
+          .catch(() => undefined),
+    }),
   );
-  const deadline = createdAt.setMinutes(createdAt.getMinutes() + 10);
-  const { minutes, seconds } = useTimer(deadline);
+
+  const attempt = submission?.attempts.find(
+    (attempt) => attempt.id.toString() === id,
+  );
+  const attemptCreatedAt = attempt?.created_at && new Date(attempt.created_at);
+  const deadline =
+    attemptCreatedAt &&
+    attemptCreatedAt.setMinutes(attemptCreatedAt.getMinutes() + 10);
+  const { minutes, seconds } = useTimer(deadline ?? new Date());
+
+  if (isLoading || !submission) return null;
 
   return (
     <div className="flex flex-1 flex-col gap-2 px-8 py-4 h-full">
