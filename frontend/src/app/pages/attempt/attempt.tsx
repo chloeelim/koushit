@@ -1,4 +1,5 @@
-import { MediaPlayer, MediaProvider } from "@vidstack/react";
+import { useEffect, useState } from "react";
+import { MediaControls, MediaPlayer, MediaProvider } from "@vidstack/react";
 import { ChevronRight, Info, Timer, Videotape } from "lucide-react";
 
 import useTimer from "@/app/hooks/useTimer";
@@ -6,9 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
 const Attempt = () => {
-  const createdAt = new Date(
-    "Sun Jan 19 2025 06:38:15 GMT+0800 (Singapore Standard Time)",
-  );
+  const createdAt = new Date();
   const deadline = createdAt.setMinutes(createdAt.getMinutes() + 10);
   const { minutes, seconds } = useTimer(deadline);
 
@@ -31,13 +30,7 @@ const Attempt = () => {
         <Separator className="my-3" />
         <div className="flex flex-col xl:flex-row overflow-y-auto w-full px-6 pb-6 pt-2 gap-x-12">
           <div className="flex flex-col w-full xl:w-7/12 mb-4 xl:mb-0">
-            <MediaPlayer
-              title="Sprite Fight"
-              src="https://www.youtube.com/watch?v=BFGxonFq64E"
-              className="rounded"
-            >
-              <MediaProvider />
-            </MediaPlayer>
+            <video controls src="http://localhost:8000/uploads/video.mp4" />
           </div>
           <div className="flex flex-col w-full xl:w-5/12 h-full">
             <span className="mt-4 mb-3 text-muted-foreground font-medium-light text-sm flex items-center">
