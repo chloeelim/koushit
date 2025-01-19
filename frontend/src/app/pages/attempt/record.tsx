@@ -1,19 +1,81 @@
-import { Link } from "react-router-dom";
-import { MediaPlayer, MediaProvider } from "@vidstack/react";
+import { useEffect, useRef, useState } from "react";
+import { ReactMediaRecorder } from "react-media-recorder";
+import { Link, useParams } from "react-router-dom";
+import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { ChevronRight, Notebook, Timer, Videotape } from "lucide-react";
 
 import useTimer from "@/app/hooks/useTimer";
+import { createFileFilesPost, getVideoVideosVideoIdGet } from "@/client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
+const VideoPreview = ({ stream }: { stream: MediaStream | null }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current && stream) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [stream]);
+  if (!stream) {
+    return null;
+  }
+  return <video ref={videoRef} width={500} height={500} autoPlay controls />;
+};
+
+export const uploadFile = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await createFileFilesPost({
+    body: { file },
+  });
+  return response.data;
+};
+
 const AttemptRecord = () => {
-  const createdAt = new Date(
-    "Sun Jan 19 2025 07:38:15 GMT+0800 (Singapore Standard Time)",
+  const { id } = useParams();
+  const { data: submission, isLoading } = useQuery(
+    queryOptions({
+      queryKey: ["video", 6],
+      queryFn: () =>
+        getVideoVideosVideoIdGet({ path: { video_id: 6 } })
+          .then((response) => response.data)
+          .catch(() => undefined),
+    }),
   );
-  const deadline = createdAt.setMinutes(createdAt.getMinutes() + 2);
-  const { minutes, seconds } = useTimer(deadline);
+
+  const [mediaBlobUrl, setMediaBlobUrl] = useState<string | null>(null);
+  const [mediaBlob, setMediaBlob] = useState<Blob | null>(null);
+
+  const attempt = submission?.attempts.find(
+    (attempt) => attempt.id.toString() === id,
+  );
+  const attemptCreatedAt = attempt?.created_at && new Date(attempt.created_at);
+  const deadline =
+    attemptCreatedAt &&
+    attemptCreatedAt.setMinutes(attemptCreatedAt.getMinutes() + 2);
+  const { minutes, seconds } = useTimer(deadline ?? new Date());
+
+  if (isLoading || !submission) return null;
+
+  const onSubmit = async () => {
+    console.log("mediaBlob", mediaBlob);
+    if (mediaBlob) {
+      console.log("mediaBlob", mediaBlob);
+      const file = new File([mediaBlob], "recording.webm", {
+        type: "video/webm;codecs=vp9",
+        lastModified: Date.now(),
+      });
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await createFileFilesPost({
+        body: { file },
+      });
+      console.log(response);
+    }
+  };
 
   return (
     <div className="flex flex-1 flex-col gap-2 px-8 py-4 h-full">
@@ -35,13 +97,51 @@ const AttemptRecord = () => {
         <div className="flex flex-col overflow-y-auto w-full px-6 pb-6 pt-2">
           <div className="flex flex-col xl:flex-row w-full gap-x-12">
             <div className="flex flex-col w-full xl:w-7/12 mb-4 xl:mb-0">
-              <MediaPlayer
-                title="Sprite Fight"
-                src="https://www.youtube.com/watch?v=BFGxonFq64E"
-                className="rounded"
-              >
-                <MediaProvider />
-              </MediaPlayer>
+              <ReactMediaRecorder
+                video
+                onStop={(blobUrl, blob) => {
+                  setMediaBlobUrl(blobUrl);
+                  setMediaBlob(blob);
+                }}
+                blobPropertyBag={{ type: "video/webm;codecs=vp9" }}
+                render={({
+                  status,
+                  startRecording,
+                  stopRecording,
+                  mediaBlobUrl,
+                  error,
+                  previewStream,
+                }) => (
+                  <div>
+                    {error && <p>Error: {error}</p>}
+
+                    {!error && (
+                      <>
+                        <p>Recording Status: {status}</p>
+
+                        <button
+                          onClick={startRecording}
+                          disabled={status !== "idle"}
+                        >
+                          Start Recording
+                        </button>
+
+                        <button
+                          onClick={stopRecording}
+                          disabled={status !== "recording"}
+                        >
+                          Stop Recording
+                        </button>
+
+                        {mediaBlobUrl && <video src={mediaBlobUrl} controls />}
+                        {!mediaBlobUrl && (
+                          <VideoPreview stream={previewStream} />
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
+              />
             </div>
             <div className="flex flex-col w-full xl:w-5/12 h-full">
               <span className="mt-4 mb-3 text-muted-foreground font-medium-light text-sm flex items-center">
@@ -96,9 +196,7 @@ const AttemptRecord = () => {
         <Link to="./../prepare">
           <Button variant="outline">Back</Button>
         </Link>
-        <Link to="./..">
-          <Button>Submit response</Button>
-        </Link>
+        <Button onClick={onSubmit}>Submit response</Button>
       </div>
     </div>
   );
