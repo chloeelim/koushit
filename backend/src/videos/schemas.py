@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
 
@@ -23,6 +24,7 @@ class AttemptPublic(BaseModel):
     user_id: int
     video_id: int
     submission: Optional["SubmissionPublic"] = None
+    created_at: datetime
 
 
 class SubmissionPublic(BaseModel):

@@ -8,11 +8,26 @@ import {
   urlSearchParamsBodySerializer,
 } from "./client";
 import type {
+  CreateAttemptVideosVideoIdAttemptsPostData,
+  CreateAttemptVideosVideoIdAttemptsPostError,
+  CreateAttemptVideosVideoIdAttemptsPostResponse,
   CreateFileFilesPostData,
   CreateFileFilesPostError,
+  CreateSubmissionVideosVideoIdAttemptsAttemptIdSubmissionsPostData,
+  CreateSubmissionVideosVideoIdAttemptsAttemptIdSubmissionsPostError,
+  CreateSubmissionVideosVideoIdAttemptsAttemptIdSubmissionsPostResponse,
+  CreateVideoVideosPostData,
+  CreateVideoVideosPostError,
+  CreateVideoVideosPostResponse,
+  GetAllVideosVideosGetData,
+  GetAllVideosVideosGetError,
+  GetAllVideosVideosGetResponse,
   GetUserAuthSessionGetData,
   GetUserAuthSessionGetError,
   GetUserAuthSessionGetResponse,
+  GetVideoVideosVideoIdGetData,
+  GetVideoVideosVideoIdGetError,
+  GetVideoVideosVideoIdGetResponse,
   LogInAuthLoginPostData,
   LogInAuthLoginPostError,
   LogInAuthLoginPostResponse,
@@ -132,6 +147,131 @@ export const createFileFilesPost = <ThrowOnError extends boolean = false>(
     ...options,
     headers: {
       "Content-Type": null,
+      ...options?.headers,
+    },
+  });
+};
+
+/**
+ * Get All Videos
+ */
+export const getAllVideosVideosGet = <ThrowOnError extends boolean = false>(
+  options?: Options<GetAllVideosVideosGetData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetAllVideosVideosGetResponse,
+    GetAllVideosVideosGetError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/videos/",
+    ...options,
+  });
+};
+
+/**
+ * Create Video
+ */
+export const createVideoVideosPost = <ThrowOnError extends boolean = false>(
+  options: Options<CreateVideoVideosPostData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).post<
+    CreateVideoVideosPostResponse,
+    CreateVideoVideosPostError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/videos/",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  });
+};
+
+/**
+ * Get Video
+ */
+export const getVideoVideosVideoIdGet = <ThrowOnError extends boolean = false>(
+  options: Options<GetVideoVideosVideoIdGetData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetVideoVideosVideoIdGetResponse,
+    GetVideoVideosVideoIdGetError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/videos/{video_id}",
+    ...options,
+  });
+};
+
+/**
+ * Create Attempt
+ */
+export const createAttemptVideosVideoIdAttemptsPost = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<CreateAttemptVideosVideoIdAttemptsPostData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).post<
+    CreateAttemptVideosVideoIdAttemptsPostResponse,
+    CreateAttemptVideosVideoIdAttemptsPostError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/videos/{video_id}/attempts",
+    ...options,
+  });
+};
+
+/**
+ * Create Submission
+ */
+export const createSubmissionVideosVideoIdAttemptsAttemptIdSubmissionsPost = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    CreateSubmissionVideosVideoIdAttemptsAttemptIdSubmissionsPostData,
+    ThrowOnError
+  >,
+) => {
+  return (options?.client ?? client).post<
+    CreateSubmissionVideosVideoIdAttemptsAttemptIdSubmissionsPostResponse,
+    CreateSubmissionVideosVideoIdAttemptsAttemptIdSubmissionsPostError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/videos/{video_id}/attempts/{attempt_id}/submissions",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
       ...options?.headers,
     },
   });

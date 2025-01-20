@@ -1,10 +1,26 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Speech } from "lucide-react";
+import { toast } from "sonner";
 
+import { createAttemptVideosVideoIdAttemptsPost } from "@/client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 const Home = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const createAttemptMutation = useMutation({
+    mutationFn: () =>
+      createAttemptVideosVideoIdAttemptsPost({ path: { video_id: 6 } }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["attempts"] });
+      navigate(`/attempts/${data.data?.id}/prepare`);
+    },
+    onError: () => {
+      toast.error("Failed to create attempt");
+    },
+  });
   return (
     <div className="flex flex-1 flex-col gap-2 px-8 py-4 h-full">
       <div className="flex flex-col space-y-1.5">
@@ -12,7 +28,7 @@ const Home = () => {
         <span className="text-muted-foreground">Today's featured question</span>
       </div>
       <Separator className="my-4" />
-      <div className="flex flex-col border">
+      <div className="flex flex-col border rounded">
         <div className="flex mt-4 mx-4 items-center font-medium text-muted-foreground">
           <Speech className="size-4 mr-2" /> Oral practice
         </div>
@@ -28,9 +44,12 @@ const Home = () => {
               your response to the prompt. The delivery of your planned response
               should take only up to 2 minutes.
             </p>
-            <Link to="/attempts/1">
-              <Button className="mt-8">Start practice</Button>
-            </Link>
+            <Button
+              className="mt-8"
+              onClick={() => createAttemptMutation.mutate()}
+            >
+              Start practice
+            </Button>
           </div>
         </div>
       </div>

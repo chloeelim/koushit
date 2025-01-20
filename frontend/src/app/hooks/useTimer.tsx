@@ -15,7 +15,6 @@ export default function useTimer(
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      console.log(timespan, SECOND, interval);
       setTimespan((_timespan) => _timespan - interval);
     }, interval);
 
